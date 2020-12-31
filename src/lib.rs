@@ -1,3 +1,7 @@
+extern crate measurements;
+use measurements::mass::Mass;
+use measurements::volume::Volume;
+
 /// Blood alcohol content (BAC) is a measure of the amount of alcohol circulating in your bloodstream. 
 /// It is expressed in terms of weight (milligrams) per unit of volume (milliliters) and is 
 /// usually shown as a percentage. Blood alcohol content is used for legal and medical purposes 
@@ -18,31 +22,31 @@ pub enum Gender {
 
 pub struct Person {
     gender: Gender,
-    weight_kg: u32,
-    height_cm: u32,
+    weight: u32,
+    height: u32,
     // phys_cond: PhysicalCond,
     // meal: Meal,
     // sleep_amt: Duration,
 }
 
 impl Person {
-    pub fn new(gender: Option<Gender>, weight_kg: Option<u32>, height_cm: Option<u32>) -> Self {
+    pub fn new(gender: Option<Gender>, weight: Option<u32>, height: Option<u32>) -> Self {
         Person {
             gender: gender.unwrap_or(Gender::Unknown),
-            weight_kg: weight_kg.unwrap_or(50),
-            height_cm: height_cm.unwrap_or(50),
+            weight: weight.unwrap_or(50),
+            height: height.unwrap_or(50),
         }
     }
 
-    pub fn blood_ml(&self) -> u32 {
-        let avg_blood_of_person = 5 * 1000;
-        avg_blood_of_person
+    pub fn blood_as_ml(&self) -> Volume {
+        let avg_blood_of_person = 5.0 * 1000.0;
+        Volume::from_milliliters(avg_blood_of_person)
     }
 }
 
 pub struct BAC {
     alcohol_g: f64,
-    person: Person,
+    pub person: Person,
 }
 
 impl BAC {
@@ -53,12 +57,14 @@ impl BAC {
         }
     }
 
-    pub fn get(&self) -> f64 {
-        let blood_vol_ml = self.person.blood_ml();
-        self.alcohol_g / (blood_vol_ml as f64 / 100.0)
+    pub fn as_float(&self) -> f64 {
+        let blood_vol = self.person.blood_as_ml();
+        self.alcohol_g / (blood_vol.as_milliliters() / 100.0)
     }
 }
 
-pub beers_to_alc_g(beer_num: u32) {
-
+pub fn beer_to_alc_g(percent: Option<f64>, ounces: Option<f64>) -> f64 {
+    let beer_mass = Mass::from_ounces(ounces.unwrap_or(12.0));
+    let alc_percent = percent.unwrap_or(5.0);
+    beer_mass.as_grams() * (alc_percent / 100.0)
 }
