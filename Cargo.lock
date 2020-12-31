@@ -3,3 +3,12 @@
 [[package]]
 name = "bac-journal"
 version = "0.1.0"
+dependencies = [
+ "measurements",
+]
+
+[[package]]
+name = "measurements"
+version = "0.10.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb102b0fbcb75c01ae06999f5e7484d959eaf1afe95a1017942d9a4ce0db3acb"
