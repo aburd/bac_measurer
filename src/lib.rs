@@ -1,6 +1,5 @@
 extern crate measurements;
 use measurements::mass::Mass;
-use measurements::volume::Volume;
 
 /// Blood alcohol content (BAC) is a measure of the amount of alcohol circulating in your bloodstream. 
 /// It is expressed in terms of weight (milligrams) per unit of volume (milliliters) and is 
@@ -80,6 +79,7 @@ impl BAC {
         let r = self.person.gender.body_water_ratio();
         let wt = self.person.weight.as_grams();
         let b = self.person.gender.metabolic_rate();
+        // TODO: select or ask for times within a range
         let t = 1.0;
 
         let bac_as_percent = a / (r * wt);
