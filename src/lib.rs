@@ -17,54 +17,76 @@ use measurements::volume::Volume;
 pub enum Gender {
     Male,
     Female,
-    Unknown,
+}
+
+// NOTE: https://en.wikipedia.org/wiki/Blood_alcohol_content#Estimation_by_intake
+const R_MALE: f64 = 0.68;
+const R_FEMALE: f64 = 0.55;
+const MET_RATE_M: f64 = 0.015;
+const MET_RATE_F: f64 = 0.017;
+
+impl Gender {
+    fn body_water_ratio(&self) -> f64 {
+        match self {
+            Gender::Male => R_MALE,
+            Gender::Female => R_FEMALE,
+        }
+    }
+
+    fn metabolic_rate(&self) -> f64 {
+        match self {
+            Gender::Male => MET_RATE_M,
+            Gender::Female => MET_RATE_F,
+        }
+    }
 }
 
 pub struct Person {
     gender: Gender,
-    weight: u32,
-    height: u32,
-    // phys_cond: PhysicalCond,
-    // meal: Meal,
-    // sleep_amt: Duration,
+    weight: Mass,
 }
 
 impl Person {
-    pub fn new(gender: Option<Gender>, weight: Option<u32>, height: Option<u32>) -> Self {
+    pub fn new(gender: Gender, weight_kg: impl Into<f64>) -> Self {
         Person {
-            gender: gender.unwrap_or(Gender::Unknown),
-            weight: weight.unwrap_or(50),
-            height: height.unwrap_or(50),
+            gender,
+            weight: Mass::from_kilograms(weight_kg.into()),
         }
-    }
-
-    pub fn blood_as_ml(&self) -> Volume {
-        let avg_blood_of_person = 5.0 * 1000.0;
-        Volume::from_milliliters(avg_blood_of_person)
     }
 }
 
 pub struct BAC {
-    alcohol_g: f64,
+    alcohol: Mass,
     pub person: Person,
 }
 
 impl BAC {
-    pub fn new(alcohol_g: f64, person: Option<Person>) -> Self {
+    pub fn new(alcohol: Mass, person: Option<Person>) -> Self {
         BAC {
-            alcohol_g,
-            person: person.unwrap_or(Person::new(None, None, None))
+            alcohol,
+            person: person.unwrap_or(Person::new(Gender::Male, 60))
         }
     }
 
+    /// Widmark Formula
+    /// A / (r * Wt) - β * T
+    /// A is the mass of alcohol consumed.
+    /// r is the ratio of body water to total weight. It varies between individuals but averages about 0.68 for men and 0.55 for women, since women tend to a higher percentage of fat.
+    /// Wt is body weight.
+    /// β is the rate at which alcohol is metabolized. It is approximately 0.017% per hour.
+    /// T is the amount time during which alcohol was present in the blood (usually time since consuption began).
     pub fn as_float(&self) -> f64 {
-        let blood_vol = self.person.blood_as_ml();
-        self.alcohol_g / (blood_vol.as_milliliters() / 100.0)
+        let r = self.person.gender.body_water_ratio();
+        let wt = self.person.weight.as_grams();
+        let b = self.person.gender.metabolic_rate();
+        let t = 2.0;
+
+        self.alcohol.as_grams() / ((r * wt) - (b * t))
     }
 }
 
-pub fn beer_to_alc_g(percent: Option<f64>, ounces: Option<f64>) -> f64 {
+pub fn beer_to_alcohol_mass(percent: Option<f64>, ounces: Option<f64>) -> Mass {
     let beer_mass = Mass::from_ounces(ounces.unwrap_or(12.0));
     let alc_percent = percent.unwrap_or(5.0);
-    beer_mass.as_grams() * (alc_percent / 100.0)
+    beer_mass * (alc_percent / 100.0)
 }
