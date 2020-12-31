@@ -76,12 +76,15 @@ impl BAC {
     /// β is the rate at which alcohol is metabolized. It is approximately 0.017% per hour.
     /// T is the amount time during which alcohol was present in the blood (usually time since consuption began).
     pub fn as_float(&self) -> f64 {
+        let a = self.alcohol.as_grams();
         let r = self.person.gender.body_water_ratio();
         let wt = self.person.weight.as_grams();
         let b = self.person.gender.metabolic_rate();
-        let t = 2.0;
+        let t = 1.0;
 
-        self.alcohol.as_grams() / ((r * wt) - (b * t))
+        let bac_as_percent = a / (r * wt);
+        let time_variance = b * t;
+        (bac_as_percent * 100.0) - time_variance
     }
 }
 
