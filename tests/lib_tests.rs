@@ -16,3 +16,13 @@ fn it_approximates_males_correctly() {
     let answer = 0.0251;
     is_close(bac.as_float(), answer, 3);
 }
+
+#[test]
+fn it_approximates_females_correctly() {
+    // 70 kg woman drinking 2.5 drinks of 10 grams each, in two hours:
+    let person = Person::new(Gender::Female, 70.0);
+    let bac = BAC::new(Mass::from_grams(25.0), Some(person));
+
+    let answer = 0.03;
+    is_close(bac.as_float(), answer, 3);
+}
