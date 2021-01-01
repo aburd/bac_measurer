@@ -1,17 +1,6 @@
 extern crate measurements;
 use measurements::mass::Mass;
 
-/// Blood alcohol content (BAC) is a measure of the amount of alcohol circulating in your bloodstream. 
-/// It is expressed in terms of weight (milligrams) per unit of volume (milliliters) and is 
-/// usually shown as a percentage. Blood alcohol content is used for legal and medical purposes 
-/// to indicate a person's level of intoxication.  
-/// Blood alcohol content is the amount of alcohol present in 100 milliliters (ml) 
-/// or its equivalent of 1 deciliter (dL) of blood. For example: 
-/// 
-/// 80 mg is 0.08 grams
-/// 0.08 grams of alcohol in 100 ml is 0.08%
-/// This can also be expressed as 80 mg/dL or a BAC of 0.08
-
 /// Holds data about an alcoholic drink
 pub struct Drink {
     pub name: String,
