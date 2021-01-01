@@ -12,7 +12,43 @@ use measurements::mass::Mass;
 /// 0.08 grams of alcohol in 100 ml is 0.08%
 /// This can also be expressed as 80 mg/dL or a BAC of 0.08
 
+/// Holds data about an alcoholic drink
+pub struct Drink {
+    pub name: String,
+    pub percent: f64,
+    mass: Mass,
+}
 
+impl Drink {
+    /// Create a drink where
+    /// `name` is the name of the drink (for logging purposes)
+    /// `percent` is the alcoholic percentage of the drink
+    /// `mass` is the mass of the drink (e.g. 12oz)
+    fn new(name: &str, percent: f64, mass: Mass) -> Self {
+        Drink {
+            name: name.to_string(),
+            percent,
+            mass,
+        }
+    }
+
+    /// Create a drink as a common beer
+    fn from_beer(name: &str) -> Self {
+        Drink {
+            name: name.to_string(),
+            percent: 5.0,
+            mass: Mass::from_ounces(12.0),
+        }
+    }
+
+    /// A function that reports the alcoholic mass
+    /// of the drink
+    pub fn alcohol_mass(&self) -> Mass {
+        self.mass * (self.percent / 100.0)
+    }
+}
+
+/// Used to show the gender of the alcohol user
 pub enum Gender {
     Male,
     Female,
@@ -25,6 +61,7 @@ const MET_RATE_M: f64 = 0.015;
 const MET_RATE_F: f64 = 0.017;
 
 impl Gender {
+    /// The body water ratio for each gender
     fn body_water_ratio(&self) -> f64 {
         match self {
             Gender::Male => R_MALE,
@@ -32,6 +69,7 @@ impl Gender {
         }
     }
 
+    /// The metabolic rate for each gender
     fn metabolic_rate(&self) -> f64 {
         match self {
             Gender::Male => MET_RATE_M,
@@ -40,12 +78,14 @@ impl Gender {
     }
 }
 
+/// The person drinking alcohol
 pub struct Person {
     gender: Gender,
     weight: Mass,
 }
 
 impl Person {
+    /// Create new person
     pub fn new(gender: Gender, weight_kg: impl Into<f64>) -> Self {
         Person {
             gender,
@@ -54,6 +94,7 @@ impl Person {
     }
 }
 
+/// Blood Alcohol Concentration
 pub struct BAC {
     alcohol: Mass,
     pub person: Person,
@@ -80,16 +121,10 @@ impl BAC {
         let wt = self.person.weight.as_grams();
         let b = self.person.gender.metabolic_rate();
         // TODO: select or ask for times within a range
-        let t = 1.0;
+        let t = 2.0;
 
         let bac_as_percent = a / (r * wt);
         let time_variance = b * t;
         (bac_as_percent * 100.0) - time_variance
     }
-}
-
-pub fn beer_to_alcohol_mass(percent: Option<f64>, ounces: Option<f64>) -> Mass {
-    let beer_mass = Mass::from_ounces(ounces.unwrap_or(12.0));
-    let alc_percent = percent.unwrap_or(5.0);
-    beer_mass * (alc_percent / 100.0)
 }
