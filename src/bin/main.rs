@@ -86,13 +86,22 @@ fn report_legal_limit(user: &User) {
                 "You are {:.3} points over the legal driving limit of {}.",
                 diff, country
             );
-            let hours = user.bac.hours_till_0();
-            let minutes = (hours - hours.floor()) * 60.0;
-            println!(
-                "You need to not drink for {} hours and {} minutes to reach complete sobriety.",
-                hours.floor(),
-                minutes.round()
-            );
+            {
+                let (hours, minutes) = user.bac.hours_minutes_until(user.bac.as_float());
+                println!(
+                    "You need to not drink for {} hours and {} minutes to reach complete sobriety.",
+                    hours.floor(),
+                    minutes.round()
+                );
+            }
+            {
+                let (hours, minutes) = user.bac.hours_minutes_until(diff);
+                println!(
+                    "Or you could stop drinking for {} hours and {} minutes to legally drive.",
+                    hours.floor(),
+                    minutes.round()
+                );
+            }
         }
     }
 }

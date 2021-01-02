@@ -128,8 +128,14 @@ impl BAC {
         0.0
     }
 
-    /// The number of hours needed to reach a 0.0 BAC
-    pub fn hours_till_0(&self) -> f64 {
-        self.as_float() / self.person.gender.metabolic_rate()
+    /// Report on some alcohol concentration
+    pub fn hours_minutes_until(&self, ac: f64) -> (f64, f64) {
+        let hours = self.hours_till(ac);
+        let minutes = (hours - hours.floor()) * 60.0;
+        (hours, minutes)
+    }
+    /// Return how many hours it will take to relieve some alcoholic concentration
+    pub fn hours_till(&self, ac: f64) -> f64 {
+        ac / self.person.gender.metabolic_rate()
     }
 }
