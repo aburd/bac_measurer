@@ -1,9 +1,73 @@
-use measurements::mass::Mass;
-use bac_journal::{BAC, Person, Gender};
+use std::fs::{self, File};
+use bac_journal::{drink::{Drink}, person::{Gender, Person}, BAC};
+extern crate clap;
+use clap::{App, Arg, ArgMatches, SubCommand};
 
-fn main() {
-    let person = Person::new(Gender::Male, 80.0);
-    let bac = BAC::new(Mass::from_grams(30.0), Some(person));
+type Error = std::io::Error;
 
-    println!("Your BAC is {:.4}", &bac.as_float());
+fn get_matches() -> ArgMatches<'static> {
+    App::new("Alcohol Mate")
+        .version("1.0")
+        .author("Aaron B. <burdick.aaron@gmail.com>")
+        .about("Helps you drink alcohol at a pace that is healthy")
+        .arg(
+            Arg::with_name("config")
+                .short("c")
+                .long("config")
+                .value_name("FILE")
+                .help("Sets a custom config file")
+                .takes_value(true),
+        )
+        .subcommand(
+            SubCommand::with_name("add")
+                .about("add a drink")
+                .arg(
+                    Arg::with_name("drink")
+                        .short("d")
+                        .required(true)
+                        .help("The name of the drink"),
+                )
+                .arg(
+                    Arg::with_name("percent")
+                        .short("p")
+                        .required(true)
+                        .help("The percentage of the drink"),
+                )
+                .arg(
+                    Arg::with_name("weight")
+                        .short("w")
+                        .required(true)
+                        .help("The weight of the drink"),
+                ),
+        )
+        .get_matches()
+}
+
+fn cli_loop() {
+    loop {
+
+    }
+}
+
+fn with_config(config: &str, matches: &ArgMatches<'static>) -> Result<(), Error> {
+    
+
+    
+    println!();
+    Ok(())
+}
+
+fn without_config(matches: &ArgMatches<'static>) -> Result<(), Error> {
+    Ok(())
+}
+
+fn main() -> Result<(), Error> {
+    let matches = get_matches();
+
+    match &matches.value_of("config") {
+        Some(config) => with_config(config, &matches)?,
+        None => without_config(&matches)?,
+    };
+
+    Ok(())
 }

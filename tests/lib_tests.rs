@@ -1,4 +1,4 @@
-use bac_journal::{Gender, Person, BAC};
+use bac_journal::{person::{Gender, Person}, BAC};
 use bac_journal::drink::Drink;
 use chrono::prelude::*;
 use chrono::Duration;
