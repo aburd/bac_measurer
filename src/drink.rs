@@ -1,6 +1,6 @@
 use chrono::prelude::*;
-use serde::{Serialize, Deserialize};
 use measurements::mass::Mass;
+use serde::{Deserialize, Serialize};
 
 /// Holds data about an alcoholic drink
 pub struct Drink {
@@ -19,16 +19,17 @@ pub struct DrinkJSON {
 }
 
 impl DrinkJSON {
-    pub fn as_drink(self) -> Drink {
+    pub fn as_drink(self) -> Result<Drink, std::io::Error> {
         let mass = Mass::from_grams(self.grams);
-        let datetime = DateTime::parse_from_rfc2822(&self.datetime_rfc2822).unwrap().with_timezone(&chrono::Utc);
-        
-        Drink {
+        let datetime_fixed = DateTime::parse_from_rfc2822(&self.datetime_rfc2822).unwrap();
+        let datetime = datetime_fixed.with_timezone(&chrono::Utc);
+
+        Ok(Drink {
             name: self.name,
             percent: self.percent,
             mass,
             datetime,
-        }
+        })
     }
 }
 

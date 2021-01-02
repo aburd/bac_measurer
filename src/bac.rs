@@ -1,8 +1,28 @@
 extern crate measurements;
+use crate::drink::{Drink, DrinkJSON};
+use crate::person::{Gender, Person, PersonJSON};
 use measurements::mass::Mass;
+use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::prelude::*;
 
-use crate::drink::{Drink};
-use crate::person::{Gender, Person};
+#[derive(Serialize, Deserialize, Debug)]
+pub struct BacJSON {
+    drinks: Vec<DrinkJSON>,
+    person: PersonJSON,
+}
+
+impl BacJSON {
+    pub fn as_bac(self) -> Result<BAC, std::io::Error> {
+        let mut drinks: Vec<Drink> = vec![];
+        for dj in self.drinks {
+            let drink = dj.as_drink().unwrap();
+            drinks.push(drink);
+        }
+        let person: Person = self.person.as_person()?;
+        Ok(BAC { drinks, person })
+    }
+}
 
 /// Blood Alcohol Concentration
 pub struct BAC {
@@ -18,15 +38,21 @@ impl BAC {
         }
     }
 
-    // pub fn from_config(path: &str) -> Result<Self, std::io::Error> {
-    //     // let file = File::open(path)?;
+    pub fn from_config(path: &str) -> Result<Self, std::io::Error> {
+        let mut file = File::open(path)?;
+        let mut buf = String::new();
+        file.read_to_string(&mut buf)?;
 
-    //     let drink_json: Vec<DrinkJSON> = serde_json::from_str(data).unwrap();
-    //     let drinks: Vec<_> = drink_json.iter().map(|dj| dj.as_drink()).collect();
-    //     Ok(BAC {
-    //         drinks
-    //     })
-    // }
+        let bac_json: BacJSON = serde_json::from_str(&buf)?;
+        let mut drinks: Vec<Drink> = vec![];
+        for dj in bac_json.drinks {
+            let drink = dj.as_drink().unwrap();
+            drinks.push(drink);
+        }
+        let person = bac_json.person.as_person()?;
+
+        Ok(BAC { drinks, person })
+    }
 
     pub fn push_drink(&mut self, drink: Drink) {
         self.drinks.push(drink);

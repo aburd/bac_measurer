@@ -1,5 +1,5 @@
 use measurements::mass::Mass;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Used to show the gender of the alcohol user
 #[derive(Debug, PartialEq)]
