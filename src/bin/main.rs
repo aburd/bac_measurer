@@ -116,11 +116,15 @@ fn cli_loop(user: User) {
     let mut buf = String::new();
     loop {
         println!("Your current BAC is {:.3}", &user.bac.as_float());
-        println!("\n\n");
+        println!("");
 
         drink_report(&user);
+        println!("");
+
         person_report(&user);
+        println!("");
         report_legal_limit(&user);
+        println!("");
 
         std::io::stdin().read_line(&mut buf);
         if !buf.is_empty() {

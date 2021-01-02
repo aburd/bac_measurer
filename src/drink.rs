@@ -77,6 +77,7 @@ impl Drink {
         let now = Utc::now();
         let duration = now - self.datetime;
         let seconds = duration.num_seconds();
+
         seconds as f64 / (60.0 * 60.0)
     }
 }
