@@ -74,20 +74,35 @@ pub struct BAC {
 }
 
 impl BAC {
+    /// Make a new BAC
     pub fn new(drinks: Vec<Drink>, person: Person) -> Self {
         BAC {
             drinks,
             person,
         }
     }
-
+    /// Add a drink to the user's session
     pub fn push_drink(&mut self, drink: Drink) {
         self.drinks.push(drink);
     }
-
+    /// Specify a drink to add to the users session
     pub fn new_drink(&mut self, name: &str, percent: f64, mass: Mass) {
         let drink = Drink::new(name, percent, mass);
         self.push_drink(drink);
+    }
+    /// The first drink the user has had in the session
+    pub fn first_drink(&self) -> Option<&Drink> {
+        self.drinks.first()
+    }
+    /// The number of drinks the user has had
+    pub fn drink_len(&self) -> usize {
+        self.drinks.len()
+    }
+    pub fn beer_ac(&self) -> f64 {
+        let drink = Drink::from_beer("Beer");
+        let person = self.person.clone();
+        let bac = BAC::new(vec![drink], person);
+        bac.as_float()
     }
 
     /// Widmark Formula
@@ -115,5 +130,10 @@ impl BAC {
             return (bac_as_percent * 100.0) - time_variance;
         }
         0.0
+    }
+
+    /// The number of hours needed to reach a 0.0 BAC
+    pub fn hours_till_0(&self) -> f64 {
+        self.as_float() / self.person.gender.metabolic_rate()
     }
 }

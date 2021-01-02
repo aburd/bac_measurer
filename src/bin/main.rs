@@ -1,4 +1,5 @@
 use bac_journal::{User};
+use bac_journal::drink::legal_limits;
 extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use std::env::current_dir;
@@ -45,10 +46,50 @@ fn get_matches() -> ArgMatches<'static> {
         .get_matches()
 }
 
+fn report_drink_len(user: &User) {
+    let drink_len = user.bac.drink_len();
+    let msg = match drink_len {
+        len if drink_len > 1 => format!("You've had {} drinks", len),
+        1 => "You've had 1 drink".to_string(),
+        0 => "You've had no drinks".to_string(),
+        _ => panic!("Invalid drink num"),
+    };
+    println!("{}", msg);
+}
+
+fn report_legal_limit(user: &User) {
+    let limits = legal_limits();
+    // TODO: Implement way of following user's country
+    let country = "Japan".to_string();
+    if let Some(limit) = limits.get(&country) {
+        let diff = limit - user.bac.as_float();
+        if diff > 0.0 {
+            let diff = diff.abs();
+            println!("beerac: {}", user.bac.beer_ac());
+            let beers_left = diff / user.bac.beer_ac();
+            println!("You are {:.3} points under the legal driving limit of {}", diff, country);
+            println!("It would take {:.2} beers to get to the legal limit", beers_left);
+        } else {
+            let diff = diff.abs();
+            println!("You are {:.3} points over the legal driving limit of {}", diff, country);
+            let hours = user.bac.hours_till_0();
+            let minutes = (hours - hours.floor()) * 60.0;
+            println!("You need to not drink for {} hours and {} minutes to reach complete sobriety.", hours.floor(), minutes.round());
+        }
+    }
+}
+
 fn cli_loop(user: User) {
     let mut buf = String::new();
     loop {
-        println!("{}", &user.bac.as_float());
+        report_drink_len(&user);
+        if let Some(drink) = user.bac.first_drink() {
+            let datetime = drink.datetime.with_timezone(&chrono::Local);
+            println!("Your first drink was at {}", datetime);
+        }
+
+        println!("Your current BAC is {:.3}", &user.bac.as_float());
+        report_legal_limit(&user);
         std::io::stdin().read_line(&mut buf);
         if !buf.is_empty() {
             break;

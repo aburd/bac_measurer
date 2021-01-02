@@ -2,7 +2,7 @@ use measurements::mass::Mass;
 use serde::{Deserialize, Serialize};
 
 /// Used to show the gender of the alcohol user
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Gender {
     Male,
     Female,
@@ -54,6 +54,7 @@ impl PersonJSON {
 }
 
 /// The person drinking alcohol
+#[derive(Clone)]
 pub struct Person {
     pub gender: Gender,
     pub weight: Mass,

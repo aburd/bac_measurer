@@ -1,13 +1,14 @@
 use chrono::prelude::*;
 use measurements::mass::Mass;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Holds data about an alcoholic drink
 pub struct Drink {
     pub name: String,
-    percent: f64,
-    mass: Mass,
-    datetime: DateTime<Utc>,
+    pub percent: f64,
+    pub mass: Mass,
+    pub datetime: DateTime<Utc>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -78,4 +79,16 @@ impl Drink {
         let seconds = duration.num_seconds();
         seconds as f64 / (60.0 * 60.0)
     }
+}
+
+type Limits = HashMap<String, f64>;
+
+pub fn legal_limits() -> Limits {
+    let mut limits: Limits = HashMap::new();
+    limits.insert("China".to_string(), 0.02);
+    limits.insert("United States".to_string(), 0.02);
+    limits.insert("Japan".to_string(), 0.03);
+    limits.insert("India".to_string(), 0.03);
+
+    limits
 }
