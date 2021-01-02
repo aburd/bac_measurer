@@ -1,11 +1,13 @@
 extern crate measurements;
 use measurements::mass::Mass;
+use chrono::prelude::*;
 
 /// Holds data about an alcoholic drink
 pub struct Drink {
     pub name: String,
-    pub percent: f64,
+    percent: f64,
     mass: Mass,
+    datetime: DateTime<Utc>,
 }
 
 impl Drink {
@@ -13,20 +15,31 @@ impl Drink {
     /// `name` is the name of the drink (for logging purposes)
     /// `percent` is the alcoholic percentage of the drink
     /// `mass` is the mass of the drink (e.g. 12oz)
-    fn new(name: &str, percent: f64, mass: Mass) -> Self {
+    pub fn new(name: &str, percent: f64, mass: Mass) -> Self {
         Drink {
             name: name.to_string(),
             percent,
             mass,
+            datetime: Utc::now(),
+        }
+    }
+    
+    pub fn new_with_date(name: &str, percent: f64, mass: Mass, datetime: DateTime<Utc>) -> Self {
+        Drink {
+            name: name.to_string(),
+            percent,
+            mass,
+            datetime,
         }
     }
 
     /// Create a drink as a common beer
-    fn from_beer(name: &str) -> Self {
+    pub fn from_beer(name: &str) -> Self {
         Drink {
             name: name.to_string(),
             percent: 5.0,
             mass: Mass::from_ounces(12.0),
+            datetime: Utc::now(),
         }
     }
 
@@ -34,6 +47,13 @@ impl Drink {
     /// of the drink
     pub fn alcohol_mass(&self) -> Mass {
         self.mass * (self.percent / 100.0)
+    }
+
+    pub fn hours_ago(&self) -> f64 {
+        let now = Utc::now();
+        let duration = now - self.datetime;
+        let seconds = duration.num_seconds();
+        seconds as f64 / (60.0 * 60.0)
     }
 }
 
@@ -85,16 +105,25 @@ impl Person {
 
 /// Blood Alcohol Concentration
 pub struct BAC {
-    alcohol: Mass,
+    drinks: Vec<Drink>,
     pub person: Person,
 }
 
 impl BAC {
-    pub fn new(alcohol: Mass, person: Option<Person>) -> Self {
+    pub fn new(person: Option<Person>) -> Self {
         BAC {
-            alcohol,
+            drinks: Vec::new(),
             person: person.unwrap_or(Person::new(Gender::Male, 60))
         }
+    }
+
+    pub fn push_drink(&mut self, drink: Drink) {
+        self.drinks.push(drink);
+    }
+
+    pub fn new_drink(&mut self, name: &str, percent: f64, mass: Mass) {
+        let drink = Drink::new(name, percent, mass);
+        self.push_drink(drink);
     }
 
     /// Widmark Formula
@@ -105,15 +134,20 @@ impl BAC {
     /// β is the rate at which alcohol is metabolized. It is approximately 0.017% per hour.
     /// T is the amount time during which alcohol was present in the blood (usually time since consuption began).
     pub fn as_float(&self) -> f64 {
-        let a = self.alcohol.as_grams();
-        let r = self.person.gender.body_water_ratio();
-        let wt = self.person.weight.as_grams();
-        let b = self.person.gender.metabolic_rate();
-        // TODO: select or ask for times within a range
-        let t = 2.0;
-
-        let bac_as_percent = a / (r * wt);
-        let time_variance = b * t;
-        (bac_as_percent * 100.0) - time_variance
+        if let Some(first_drink) = self.drinks.first() {
+            let a = self.drinks.iter()
+                .map(|d| d.alcohol_mass().as_grams())
+                .fold(0.0, |total, mass| total + mass);
+            let r = self.person.gender.body_water_ratio();
+            let wt = self.person.weight.as_grams();
+            let b = self.person.gender.metabolic_rate();
+            
+            let t = first_drink.hours_ago();
+    
+            let bac_as_percent = a / (r * wt);
+            let time_variance = b * t;
+            return (bac_as_percent * 100.0) - time_variance
+        }
+        0.0
     }
 }
