@@ -1,7 +1,8 @@
+use bac_journal::{Gender, Person, BAC};
+use bac_journal::drink::Drink;
 use chrono::prelude::*;
 use chrono::Duration;
 use measurements::mass::Mass;
-use bac_journal::{BAC, Person, Gender, Drink};
 
 fn is_close(val: f64, estimate: f64, sig_fig: u64) {
     let sf: f64 = sig_fig as f64;
@@ -17,11 +18,7 @@ fn hours_ago(hours: i64) -> DateTime<Utc> {
 }
 
 fn drink_test(gender: Gender, alc_ounces: f64, weight: f64, answer: f64) {
-    let drink = Drink::new(
-        "Liquor",
-        100.0,
-        Mass::from_ounces(alc_ounces),
-    );
+    let drink = Drink::new("Liquor", 100.0, Mass::from_ounces(alc_ounces));
     let person = Person::new(gender, weight);
     let mut bac = BAC::new(Some(person));
     bac.push_drink(drink);
@@ -41,7 +38,6 @@ fn male_55_kg() {
 fn male_64_kg() {
     drink_test(Gender::Male, 0.5, 64.0, 0.033);
 }
-
 
 #[test]
 fn female_45_kg() {
