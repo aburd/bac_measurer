@@ -1,5 +1,5 @@
-use std::fs::{self, File};
-use bac_journal::{drink::{Drink}, person::{Gender, Person}, BAC};
+use bac_journal::{Person, Drink, BAC};
+use bac_journal::person::Gender;
 extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
 
