@@ -1,5 +1,8 @@
-use bac_journal::{person::{Gender, Person}, BAC};
 use bac_journal::drink::Drink;
+use bac_journal::{
+    person::{Gender, Person},
+    BAC,
+};
 use chrono::prelude::*;
 use chrono::Duration;
 use measurements::mass::Mass;

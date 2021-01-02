@@ -1,5 +1,5 @@
-use bac_journal::{Person, Drink, BAC};
 use bac_journal::person::Gender;
+use bac_journal::{Drink, Person, BAC};
 extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
 
@@ -44,15 +44,10 @@ fn get_matches() -> ArgMatches<'static> {
 }
 
 fn cli_loop() {
-    loop {
-
-    }
+    loop {}
 }
 
 fn with_config(config: &str, matches: &ArgMatches<'static>) -> Result<(), Error> {
-    
-
-    
     println!();
     Ok(())
 }

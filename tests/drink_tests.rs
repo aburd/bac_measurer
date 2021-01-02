@@ -1,4 +1,4 @@
-use bac_journal::drink::{Drink, DrinkJSON};
+use bac_journal::drink::DrinkJSON;
 
 #[test]
 fn can_parse_json_drink() {
@@ -12,6 +12,6 @@ fn can_parse_json_drink() {
     "#;
 
     let drink_json: DrinkJSON = serde_json::from_str(data).unwrap();
-    let drink = drink_json.as_drink();
+    let drink = drink_json.as_drink().unwrap();
     assert_eq!(&drink.name, "Bud");
 }
