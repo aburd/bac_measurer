@@ -23,8 +23,8 @@ fn hours_ago(hours: i64) -> DateTime<Utc> {
 fn drink_test(gender: Gender, alc_ounces: f64, weight: f64, answer: f64) {
     let drink = Drink::new("Liquor", 100.0, Mass::from_ounces(alc_ounces));
     let person = Person::new(gender, weight);
-    let mut bac = BAC::new(Some(person));
-    bac.push_drink(drink);
+    let drinks = vec![drink];
+    let bac = BAC::new(drinks, person);
 
     is_close(bac.as_float(), answer, 3);
 }

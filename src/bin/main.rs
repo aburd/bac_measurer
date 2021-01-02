@@ -1,9 +1,11 @@
-use bac_journal::person::Gender;
-use bac_journal::{Drink, Person, BAC};
+use bac_journal::{User};
 extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
+use std::env::current_dir;
+use std::path::{PathBuf};
 
 type Error = std::io::Error;
+
 
 fn get_matches() -> ArgMatches<'static> {
     App::new("Alcohol Mate")
@@ -47,22 +49,20 @@ fn cli_loop() {
     loop {}
 }
 
-fn with_config(config: &str, matches: &ArgMatches<'static>) -> Result<(), Error> {
-    println!();
-    Ok(())
-}
-
-fn without_config(matches: &ArgMatches<'static>) -> Result<(), Error> {
-    Ok(())
-}
-
 fn main() -> Result<(), Error> {
     let matches = get_matches();
 
-    match &matches.value_of("config") {
-        Some(config) => with_config(config, &matches)?,
-        None => without_config(&matches)?,
+    let dir_path = match &matches.value_of("config") {
+        Some(config_path) => PathBuf::from(config_path),
+        None => {
+            let dir_path = current_dir()?;
+            println!("No config path provided. Using {}", dir_path.to_str().unwrap());
+            dir_path
+        },
     };
+
+    let user = User::open(dir_path)?;
+    println!("{}", user.bac.as_float());
 
     Ok(())
 }

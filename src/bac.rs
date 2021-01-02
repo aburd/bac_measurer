@@ -3,8 +3,10 @@ use crate::drink::{Drink, DrinkJSON};
 use crate::person::{Gender, Person, PersonJSON};
 use measurements::mass::Mass;
 use serde::{Deserialize, Serialize};
-use std::fs::File;
+use std::io::BufReader;
 use std::io::prelude::*;
+use std::fs::{File, OpenOptions};
+use std::path::{Path, PathBuf};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BacJSON {
@@ -12,15 +14,56 @@ pub struct BacJSON {
     person: PersonJSON,
 }
 
-impl BacJSON {
-    pub fn as_bac(self) -> Result<BAC, std::io::Error> {
+fn log_path(dir: &PathBuf) -> PathBuf {
+    dir.join("config.json")
+}
+
+pub struct User {
+    reader: BufReader<File>,
+    pub bac: BAC,
+}
+
+impl User {
+    pub fn open(dir_path: impl Into<PathBuf>) -> Result<Self, std::io::Error> {
+        let dir_path = dir_path.into();
+        std::fs::create_dir_all(&dir_path)?;
+        let path = log_path(&dir_path);
+        let file = match File::open(&path) {
+            Ok(file) => file,
+            Err(e) => {
+                println!("{}", e);
+                let mut f = File::create(&path)?;
+                let bac_json = BacJSON {
+                    drinks: vec![],
+                    person: PersonJSON {
+                        gender: String::from("male"),
+                        grams: 70000.0,
+                    }
+                };
+                let json = serde_json::to_string(&bac_json)?;
+                f.write_all(json.as_bytes())?;
+                File::open(&path)?
+            }
+        };
+
+        let mut reader = BufReader::new(file);
+        let mut buf = String::new();
+        reader.read_to_string(&mut buf)?;
+        let bac_json: BacJSON = serde_json::from_str(&buf)?;
+
         let mut drinks: Vec<Drink> = vec![];
-        for dj in self.drinks {
+        for dj in bac_json.drinks {
             let drink = dj.as_drink().unwrap();
             drinks.push(drink);
         }
-        let person: Person = self.person.as_person()?;
-        Ok(BAC { drinks, person })
+        let person = bac_json.person.as_person()?;
+
+        let bac = BAC::new(drinks, person);
+
+        Ok(User {
+            reader,
+            bac
+        })
     }
 }
 
@@ -31,27 +74,11 @@ pub struct BAC {
 }
 
 impl BAC {
-    pub fn new(person: Option<Person>) -> Self {
+    pub fn new(drinks: Vec<Drink>, person: Person) -> Self {
         BAC {
-            drinks: Vec::new(),
-            person: person.unwrap_or(Person::new(Gender::Male, 60)),
+            drinks,
+            person,
         }
-    }
-
-    pub fn from_config(path: &str) -> Result<Self, std::io::Error> {
-        let mut file = File::open(path)?;
-        let mut buf = String::new();
-        file.read_to_string(&mut buf)?;
-
-        let bac_json: BacJSON = serde_json::from_str(&buf)?;
-        let mut drinks: Vec<Drink> = vec![];
-        for dj in bac_json.drinks {
-            let drink = dj.as_drink().unwrap();
-            drinks.push(drink);
-        }
-        let person = bac_json.person.as_person()?;
-
-        Ok(BAC { drinks, person })
     }
 
     pub fn push_drink(&mut self, drink: Drink) {
