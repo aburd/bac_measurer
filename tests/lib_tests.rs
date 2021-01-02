@@ -10,33 +10,48 @@ fn is_close(val: f64, estimate: f64, sig_fig: u64) {
     assert_eq!(val_trunc, estimate_trunc);
 }
 
-#[test]
-fn it_approximates_males_correctly() {
-    let drink = Drink::from_beer("Bud");
-    let person = Person::new(Gender::Male, 80.0);
+fn hours_ago(hours: i64) -> DateTime<Utc> {
+    let now = Utc::now();
+    let hours_ago = Duration::hours(hours);
+    now - hours_ago
+}
+
+fn drink_test(gender: Gender, alc_ounces: f64, weight: f64, answer: f64) {
+    let drink = Drink::new(
+        "Liquor",
+        100.0,
+        Mass::from_ounces(alc_ounces),
+    );
+    let person = Person::new(gender, weight);
     let mut bac = BAC::new(Some(person));
     bac.push_drink(drink);
 
-    let answer = 0.0313;
     is_close(bac.as_float(), answer, 3);
 }
 
 #[test]
-fn it_approximates_females_correctly() {
-    let now = Utc::now();
-    let two_hours = Duration::hours(2);
-    let two_hour_ago = now - two_hours;
-    let drink = Drink::new_with_date(
-        "Everclear",
-        100.0,
-        Mass::from_grams(2.5 * 10.0),
-        two_hour_ago,
-    );
-    // 70 kg woman drinking 2.5 drinks of 10 grams each, in two hours:
-    let person = Person::new(Gender::Female, 70.0);
-    let mut bac = BAC::new(Some(person));
-    bac.push_drink(drink);
+fn male_45_kg() {
+    drink_test(Gender::Male, 0.5, 45.0, 0.046);
+}
+#[test]
+fn male_55_kg() {
+    drink_test(Gender::Male, 0.5, 55.0, 0.036);
+}
+#[test]
+fn male_64_kg() {
+    drink_test(Gender::Male, 0.5, 64.0, 0.033);
+}
 
-    let answer = 0.03;
-    is_close(bac.as_float(), answer, 3);
+
+#[test]
+fn female_45_kg() {
+    drink_test(Gender::Female, 0.5, 45.0, 0.056);
+}
+#[test]
+fn female_55_kg() {
+    drink_test(Gender::Female, 0.5, 55.0, 0.046);
+}
+#[test]
+fn female_64_kg() {
+    drink_test(Gender::Female, 0.5, 64.0, 0.04);
 }
