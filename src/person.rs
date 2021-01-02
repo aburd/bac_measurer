@@ -1,6 +1,8 @@
 use measurements::mass::Mass;
+use serde::{Serialize, Deserialize};
 
 /// Used to show the gender of the alcohol user
+#[derive(Debug, PartialEq)]
 pub enum Gender {
     Male,
     Female,
@@ -27,6 +29,27 @@ impl Gender {
             Gender::Male => MET_RATE_M,
             Gender::Female => MET_RATE_F,
         }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct PersonJSON {
+    pub gender: String,
+    pub grams: f64,
+}
+
+impl PersonJSON {
+    pub fn as_person(self) -> Result<Person, std::io::Error> {
+        let weight = Mass::from_grams(self.grams);
+        let gender: Gender = if self.gender == String::from("male") {
+            Gender::Male
+        } else if self.gender == String::from("female") {
+            Gender::Female
+        } else {
+            return Err(std::io::Error::from(std::io::ErrorKind::InvalidData));
+        };
+
+        Ok(Person { weight, gender })
     }
 }
 
