@@ -1,12 +1,11 @@
-use bac_journal::{User};
 use bac_journal::drink::legal_limits;
+use bac_journal::User;
 extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use std::env::current_dir;
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 type Error = std::io::Error;
-
 
 fn get_matches() -> ArgMatches<'static> {
     App::new("Alcohol Mate")
@@ -46,7 +45,7 @@ fn get_matches() -> ArgMatches<'static> {
         .get_matches()
 }
 
-fn report_drink_len(user: &User) {
+fn drink_report(user: &User) {
     let drink_len = user.bac.drink_len();
     let msg = match drink_len {
         len if drink_len > 1 => format!("You've had {} drinks", len),
@@ -55,6 +54,20 @@ fn report_drink_len(user: &User) {
         _ => panic!("Invalid drink num"),
     };
     println!("{}", msg);
+
+    if let Some(drink) = user.bac.first_drink() {
+        let datetime = drink.datetime.with_timezone(&chrono::Local);
+        println!("Your first drink was at {}.", datetime);
+        println!(
+            "The drink was {} oz at a percentage of {}.",
+            drink.mass.as_ounces(),
+            drink.percent
+        );
+        println!(
+            "The drink had an alcoholic mass of {} grams.",
+            drink.alcohol_mass().as_grams()
+        );
+    }
 }
 
 fn report_legal_limit(user: &User) {
@@ -65,31 +78,50 @@ fn report_legal_limit(user: &User) {
         let diff = limit - user.bac.as_float();
         if diff > 0.0 {
             let diff = diff.abs();
-            println!("beerac: {}", user.bac.beer_ac());
             let beers_left = diff / user.bac.beer_ac();
-            println!("You are {:.3} points under the legal driving limit of {}", diff, country);
-            println!("It would take {:.2} beers to get to the legal limit", beers_left);
+            println!(
+                "You are {:.3} points under the legal driving limit of {}",
+                diff, country
+            );
+            println!(
+                "It would take {:.2} beers to get to the legal limit",
+                beers_left
+            );
         } else {
             let diff = diff.abs();
-            println!("You are {:.3} points over the legal driving limit of {}", diff, country);
+            println!(
+                "You are {:.3} points over the legal driving limit of {}",
+                diff, country
+            );
             let hours = user.bac.hours_till_0();
             let minutes = (hours - hours.floor()) * 60.0;
-            println!("You need to not drink for {} hours and {} minutes to reach complete sobriety.", hours.floor(), minutes.round());
+            println!(
+                "You need to not drink for {} hours and {} minutes to reach complete sobriety.",
+                hours.floor(),
+                minutes.round()
+            );
         }
     }
+}
+
+fn person_report(user: &User) {
+    println!(
+        "You are a {} and weigh {} kgs.",
+        user.bac.person.gender,
+        user.bac.person.weight.as_kilograms()
+    );
 }
 
 fn cli_loop(user: User) {
     let mut buf = String::new();
     loop {
-        report_drink_len(&user);
-        if let Some(drink) = user.bac.first_drink() {
-            let datetime = drink.datetime.with_timezone(&chrono::Local);
-            println!("Your first drink was at {}", datetime);
-        }
-
         println!("Your current BAC is {:.3}", &user.bac.as_float());
+        println!("\n\n");
+
+        drink_report(&user);
+        person_report(&user);
         report_legal_limit(&user);
+
         std::io::stdin().read_line(&mut buf);
         if !buf.is_empty() {
             break;
@@ -104,9 +136,12 @@ fn main() -> Result<(), Error> {
         Some(config_path) => PathBuf::from(config_path),
         None => {
             let dir_path = current_dir()?;
-            println!("No config path provided. Using {}", dir_path.to_str().unwrap());
+            println!(
+                "No config path provided. Using {}",
+                dir_path.to_str().unwrap()
+            );
             dir_path
-        },
+        }
     };
 
     let user = User::open(dir_path)?;

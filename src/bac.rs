@@ -3,9 +3,9 @@ use crate::drink::{Drink, DrinkJSON};
 use crate::person::{Gender, Person, PersonJSON};
 use measurements::mass::Mass;
 use serde::{Deserialize, Serialize};
-use std::io::BufReader;
-use std::io::prelude::*;
 use std::fs::{File, OpenOptions};
+use std::io::prelude::*;
+use std::io::BufReader;
 use std::path::{Path, PathBuf};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -38,7 +38,7 @@ impl User {
                     person: PersonJSON {
                         gender: String::from("male"),
                         grams: 70000.0,
-                    }
+                    },
                 };
                 let json = serde_json::to_string(&bac_json)?;
                 f.write_all(json.as_bytes())?;
@@ -60,10 +60,7 @@ impl User {
 
         let bac = BAC::new(drinks, person);
 
-        Ok(User {
-            reader,
-            bac
-        })
+        Ok(User { reader, bac })
     }
 }
 
@@ -76,10 +73,7 @@ pub struct BAC {
 impl BAC {
     /// Make a new BAC
     pub fn new(drinks: Vec<Drink>, person: Person) -> Self {
-        BAC {
-            drinks,
-            person,
-        }
+        BAC { drinks, person }
     }
     /// Add a drink to the user's session
     pub fn push_drink(&mut self, drink: Drink) {

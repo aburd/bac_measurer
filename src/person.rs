@@ -1,11 +1,22 @@
 use measurements::mass::Mass;
 use serde::{Deserialize, Serialize};
+use std::fmt;
 
 /// Used to show the gender of the alcohol user
 #[derive(Debug, PartialEq, Clone)]
 pub enum Gender {
     Male,
     Female,
+}
+
+impl fmt::Display for Gender {
+    // This trait requires `fmt` with this exact signature.
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Gender::Male => write!(f, "male"),
+            Gender::Female => write!(f, "female"),
+        }
+    }
 }
 
 // NOTE: https://en.wikipedia.org/wiki/Blood_alcohol_content#Estimation_by_intake
