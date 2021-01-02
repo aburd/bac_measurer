@@ -59,12 +59,13 @@ fn drink_report(user: &User) {
         let datetime = drink.datetime.with_timezone(&chrono::Local);
         println!("Your first drink was at {}.", datetime);
         println!(
-            "The drink was {} oz at a percentage of {}.",
-            drink.mass.as_ounces(),
+            "That drink was {} grams ({} oz) at a percentage of {}.",
+            drink.mass.as_grams().round(),
+            drink.mass.as_ounces().round(),
             drink.percent
         );
         println!(
-            "The drink had an alcoholic mass of {} grams.",
+            "The drink had a pure alcohol mass of {} grams.",
             drink.alcohol_mass().as_grams()
         );
     }
@@ -80,17 +81,17 @@ fn report_legal_limit(user: &User) {
             let diff = diff.abs();
             let beers_left = diff / user.bac.beer_ac();
             println!(
-                "You are {:.3} points under the legal driving limit of {}",
+                "You are {:.3} points under the legal driving limit of {}.",
                 diff, country
             );
             println!(
-                "It would take {:.2} beers to get to the legal limit",
+                "It would take {:.2} beers to get to the legal limit.",
                 beers_left
             );
         } else {
             let diff = diff.abs();
             println!(
-                "You are {:.3} points over the legal driving limit of {}",
+                "You are {:.3} points over the legal driving limit of {}.",
                 diff, country
             );
             let hours = user.bac.hours_till_0();
@@ -115,7 +116,7 @@ fn person_report(user: &User) {
 fn cli_loop(user: User) {
     let mut buf = String::new();
     loop {
-        println!("Your current BAC is {:.3}", &user.bac.as_float());
+        println!("Your current blood alcohol concentration is {:.3}.", &user.bac.as_float());
         println!("");
 
         drink_report(&user);
