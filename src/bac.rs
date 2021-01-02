@@ -66,7 +66,7 @@ impl User {
 
 /// Blood Alcohol Concentration
 pub struct BAC {
-    drinks: Vec<Drink>,
+    pub drinks: Vec<Drink>,
     pub person: Person,
 }
 
@@ -85,8 +85,10 @@ impl BAC {
         self.push_drink(drink);
     }
     /// The first drink the user has had in the session
-    pub fn first_drink(&self) -> Option<&Drink> {
-        self.drinks.first()
+    pub fn report_first_drink(&self) {
+        if let Some(drink) = self.drinks.first() {
+            println!("You started drinking at: {}", drink.local_datetime());
+        }
     }
     /// The number of drinks the user has had
     pub fn drink_len(&self) -> usize {

@@ -80,6 +80,31 @@ impl Drink {
 
         seconds as f64 / (60.0 * 60.0)
     }
+
+    pub fn local_datetime(&self) -> DateTime<Local> {
+        self.datetime.with_timezone(&Local)
+    }
+
+    pub fn report(&self) -> String {
+        let mut s = String::new();
+
+        s.push_str(&format!(
+            "You drank a {} at {}\n",
+            self.name,
+            self.local_datetime()
+        ));
+        s.push_str(&format!(
+            "That drink was {} grams ({} oz) at a percentage of {}.\n",
+            self.mass.as_grams().round(),
+            self.mass.as_ounces().round(),
+            self.percent
+        ));
+        s.push_str(&format!(
+            "The drink had a pure alcohol mass of {} grams.",
+            self.alcohol_mass().as_grams().round()
+        ));
+        s
+    }
 }
 
 type Limits = HashMap<String, f64>;

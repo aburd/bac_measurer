@@ -54,20 +54,12 @@ fn drink_report(user: &User) {
         _ => panic!("Invalid drink num"),
     };
     println!("{}", msg);
+    println!("");
 
-    if let Some(drink) = user.bac.first_drink() {
-        let datetime = drink.datetime.with_timezone(&chrono::Local);
-        println!("Your first drink was at {}.", datetime);
-        println!(
-            "That drink was {} grams ({} oz) at a percentage of {}.",
-            drink.mass.as_grams().round(),
-            drink.mass.as_ounces().round(),
-            drink.percent
-        );
-        println!(
-            "The drink had a pure alcohol mass of {} grams.",
-            drink.alcohol_mass().as_grams()
-        );
+    user.bac.report_first_drink();
+    for d in user.bac.drinks.iter() {
+        println!("{}", d.report());
+        println!("");
     }
 }
 
@@ -106,26 +98,26 @@ fn report_legal_limit(user: &User) {
 }
 
 fn person_report(user: &User) {
-    println!(
-        "You are a {} and weigh {} kgs.",
-        user.bac.person.gender,
-        user.bac.person.weight.as_kilograms()
-    );
+    println!("{}", user.bac.person.report());
 }
 
 fn cli_loop(user: User) {
     let mut buf = String::new();
     loop {
-        println!("Your current blood alcohol concentration is {:.3}.", &user.bac.as_float());
-        println!("");
+        println!("==============================");
+        println!(
+            "Your current blood alcohol concentration is {:.3}.",
+            &user.bac.as_float()
+        );
+        println!("==============================");
 
         drink_report(&user);
-        println!("");
+        println!("==============================");
 
         person_report(&user);
-        println!("");
+        println!("==============================");
         report_legal_limit(&user);
-        println!("");
+        println!("==============================");
 
         std::io::stdin().read_line(&mut buf);
         if !buf.is_empty() {

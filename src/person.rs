@@ -79,4 +79,15 @@ impl Person {
             weight: Mass::from_kilograms(weight_kg.into()),
         }
     }
+
+    pub fn report(&self) -> String {
+        let mut s = String::new();
+        s.push_str(&format!(
+            "You are a {} and weigh {:.2} kgs ({:.2} lbs).",
+            self.gender,
+            self.weight.as_kilograms(),
+            self.weight.as_pounds(),
+        ));
+        s
+    }
 }
