@@ -45,8 +45,15 @@ fn get_matches() -> ArgMatches<'static> {
         .get_matches()
 }
 
-fn cli_loop() {
-    loop {}
+fn cli_loop(user: User) {
+    let mut buf = String::new();
+    loop {
+        println!("{}", &user.bac.as_float());
+        std::io::stdin().read_line(&mut buf);
+        if !buf.is_empty() {
+            break;
+        }
+    }
 }
 
 fn main() -> Result<(), Error> {
@@ -62,7 +69,7 @@ fn main() -> Result<(), Error> {
     };
 
     let user = User::open(dir_path)?;
-    println!("{}", user.bac.as_float());
+    cli_loop(user);
 
     Ok(())
 }
