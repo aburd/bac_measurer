@@ -1,12 +1,12 @@
 extern crate measurements;
 use crate::drink::{Drink, DrinkJSON};
-use crate::person::{Gender, Person, PersonJSON};
+use crate::person::{Person, PersonJSON};
 use measurements::mass::Mass;
 use serde::{Deserialize, Serialize};
-use std::fs::{File, OpenOptions};
+use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BacJSON {

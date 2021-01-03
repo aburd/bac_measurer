@@ -1,4 +1,4 @@
-use bac_journal::person::{Gender, Person, PersonJSON};
+use bac_journal::person::{Gender, PersonJSON};
 
 #[test]
 fn can_parse_person_json() {

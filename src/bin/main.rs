@@ -110,7 +110,7 @@ fn person_report(user: &User) {
     println!("{}", user.bac.person.report());
 }
 
-fn cli_loop(user: User) {
+fn cli_loop(user: User) -> Result<(), Error> {
     let mut buf = String::new();
     loop {
         println!("==============================");
@@ -128,11 +128,12 @@ fn cli_loop(user: User) {
         report_legal_limit(&user);
         println!("==============================");
 
-        std::io::stdin().read_line(&mut buf);
+        std::io::stdin().read_line(&mut buf)?;
         if !buf.is_empty() {
             break;
         }
     }
+    Ok(())
 }
 
 fn main() -> Result<(), Error> {
@@ -151,7 +152,7 @@ fn main() -> Result<(), Error> {
     };
 
     let user = User::open(dir_path)?;
-    cli_loop(user);
+    cli_loop(user)?;
 
     Ok(())
 }

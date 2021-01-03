@@ -3,8 +3,6 @@ use bac_journal::{
     person::{Gender, Person},
     BAC,
 };
-use chrono::prelude::*;
-use chrono::Duration;
 use measurements::mass::Mass;
 
 fn is_close(val: f64, estimate: f64, sig_fig: u64) {
@@ -12,12 +10,6 @@ fn is_close(val: f64, estimate: f64, sig_fig: u64) {
     let val_trunc = (val * (sf * 100.0)).round() / (sf * 100.0);
     let estimate_trunc = (estimate * (sf * 100.0)).round() / (sf * 100.0);
     assert_eq!(val_trunc, estimate_trunc);
-}
-
-fn hours_ago(hours: i64) -> DateTime<Utc> {
-    let now = Utc::now();
-    let hours_ago = Duration::hours(hours);
-    now - hours_ago
 }
 
 fn drink_test(gender: Gender, alc_ounces: f64, weight: f64, answer: f64) {
