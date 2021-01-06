@@ -1,117 +1,115 @@
 {
   "description": "Progressive effects of alcohol[3] BAC (% by vol.) SI units (mmol/l) mg/dL Behavior Impairment",
-  "source_url": [
+  "source_urls": [
     "https://en.wikipedia.org/wiki/Blood_alcohol_content#cite_note-3",
     "http://flightphysical.com/pilot/alcohol.htm"
   ],
   "effects": [
-    [
-      {
-        "range": [0.001, 0.029],
-        "behaviors": ["May appear normal"],
-        "impairments": ["Subtle effects detected with special tests"]
-      },
-      {
-        "range": [0.03, 0.059],
-        "behaviors": [
-          "Decreased social inhibition",
-          "Joyousness",
-          "Mild euphoria",
-          "Relaxation",
-          "Increased verbosity"
-        ],
-        "impairments": ["Decreased attentional control"]
-      },
-      {
-        "range": [0.06, 0.099],
-        "behaviors": [
-          "Alcohol flush reaction",
-          "Reduced affect display",
-          "Disinhibition",
-          "Euphoria",
-          "Extraversion",
-          "Increased pain tolerance"
-        ],
-        "impairments": [
-          "Depth perception",
-          "Glare recovery",
-          "Peripheral vision",
-          "Reasoning"
-        ]
-      },
-      {
-        "range": [0.1, 0.199],
-        "behaviors": [
-          "Analgesia",
-          "Ataxia",
-          "Boisterousness",
-          "Over-expressed emotions",
-          "Possibility of nausea and vomiting",
-          "Spins"
-        ],
-        "impairments": [
-          "Gross motor skill",
-          "Motor planning",
-          "Reflexes",
-          "Slurred speech",
-          "Staggering",
-          "Temporary erectile dysfunction"
-        ]
-      },
-      {
-        "range": [0.2, 0.299],
-        "behaviors": [
-          "Anger or sadness",
-          "Anterograde amnesia",
-          "Impaired sensations",
-          "Inhibited sexual desire (ISD)",
-          "Mood swings",
-          "Nausea",
-          "Partial loss of understanding",
-          "Possibility of stupor",
-          "Vomiting"
-        ],
-        "impairments": [
-          "Amnesia (memory blackout)",
-          "Unconsciousness",
-          "Severe physical disability"
-        ]
-      },
-      {
-        "range": [0.3, 0.399],
-        "behaviors": [
-          "Central nervous system depression",
-          "Lapses in and out of consciousness",
-          "Loss of understanding",
-          "Low possibility of death",
-          "Pulmonary aspiration",
-          "Stupor"
-        ],
-        "impairments": [
-          "Dysequilibrium",
-          "Breathing",
-          "Resting heart rate",
-          "Urinary incontinence"
-        ]
-      },
-      {
-        "range": [0.4, 0.5],
-        "behaviors": [
-          "Coma",
-          "Possibility of death",
-          "Severe central nervous system depression"
-        ],
-        "impairments": [
-          "Respiratory failure",
-          "Heart rate",
-          "Positional alcohol nystagmus"
-        ]
-      },
-      {
-        "range": [0.5, 100],
-        "behaviors": ["High possibility of death"],
-        "impairments": []
-      }
-    ]
+    {
+      "range": { "start": 0.001, "end": 0.029 },
+      "behaviors": ["May appear normal"],
+      "impairments": ["Subtle effects detected with special tests"]
+    },
+    {
+      "range": { "start": 0.03, "end": 0.059 },
+      "behaviors": [
+        "Decreased social inhibition",
+        "Joyousness",
+        "Mild euphoria",
+        "Relaxation",
+        "Increased verbosity"
+      ],
+      "impairments": ["Decreased attentional control"]
+    },
+    {
+      "range": { "start": 0.06, "end": 0.099 },
+      "behaviors": [
+        "Alcohol flush reaction",
+        "Reduced affect display",
+        "Disinhibition",
+        "Euphoria",
+        "Extraversion",
+        "Increased pain tolerance"
+      ],
+      "impairments": [
+        "Depth perception",
+        "Glare recovery",
+        "Peripheral vision",
+        "Reasoning"
+      ]
+    },
+    {
+      "range": { "start": 0.1, "end": 0.199 },
+      "behaviors": [
+        "Analgesia",
+        "Ataxia",
+        "Boisterousness",
+        "Over-expressed emotions",
+        "Possibility of nausea and vomiting",
+        "Spins"
+      ],
+      "impairments": [
+        "Gross motor skill",
+        "Motor planning",
+        "Reflexes",
+        "Slurred speech",
+        "Staggering",
+        "Temporary erectile dysfunction"
+      ]
+    },
+    {
+      "range": { "start": 0.2, "end": 0.299 },
+      "behaviors": [
+        "Anger or sadness",
+        "Anterograde amnesia",
+        "Impaired sensations",
+        "Inhibited sexual desire (ISD)",
+        "Mood swings",
+        "Nausea",
+        "Partial loss of understanding",
+        "Possibility of stupor",
+        "Vomiting"
+      ],
+      "impairments": [
+        "Amnesia (memory blackout)",
+        "Unconsciousness",
+        "Severe physical disability"
+      ]
+    },
+    {
+      "range": { "start": 0.3, "end": 0.399 },
+      "behaviors": [
+        "Central nervous system depression",
+        "Lapses in and out of consciousness",
+        "Loss of understanding",
+        "Low possibility of death",
+        "Pulmonary aspiration",
+        "Stupor"
+      ],
+      "impairments": [
+        "Dysequilibrium",
+        "Breathing",
+        "Resting heart rate",
+        "Urinary incontinence"
+      ]
+    },
+    {
+      "range": { "start": 0.4, "end": 0.5 },
+      "behaviors": [
+        "Coma",
+        "Possibility of death",
+        "Severe central nervous system depression"
+      ],
+      "impairments": [
+        "Respiratory failure",
+        "Heart rate",
+        "Positional alcohol nystagmus"
+      ]
+    },
+    {
+      "range": { "start": 0.5, "end": 100 },
+      "behaviors": ["High possibility of death"],
+      "impairments": []
+    }
   ]
 }
