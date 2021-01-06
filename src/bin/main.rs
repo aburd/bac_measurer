@@ -1,5 +1,5 @@
 use bac_journal::drink::legal_limits;
-use bac_journal::User;
+use bac_journal::{EffectInfo, User};
 extern crate clap;
 use clap::{App, Arg, ArgMatches, SubCommand};
 use std::env::current_dir;
@@ -112,6 +112,7 @@ fn person_report(user: &User) {
 
 fn cli_loop(user: User) -> Result<(), Error> {
     let mut buf = String::new();
+    let effect_info = EffectInfo::from_path("data/effects.json")?;
     loop {
         println!("==============================");
         println!(
@@ -119,6 +120,13 @@ fn cli_loop(user: User) -> Result<(), Error> {
             &user.bac.as_float()
         );
         println!("==============================");
+
+        if let Some(effect) = effect_info.get_effect(user.bac.as_float()) {
+            println!(
+                "You may be experiencing the following behaviors:\n{}",
+                effect.behaviors()
+            );
+        }
 
         drink_report(&user);
         println!("==============================");

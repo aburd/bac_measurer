@@ -15,7 +15,7 @@ pub struct EffectInfo {
 type BacResult<T> = Result<T, std::io::Error>;
 
 impl EffectInfo {
-    fn from_path(path: impl Into<PathBuf>) -> BacResult<EffectInfo> {
+    pub fn from_path(path: impl Into<PathBuf>) -> BacResult<EffectInfo> {
         let path = path.into();
         let mut f = File::open(&path)?;
         let mut buf = String::new();
@@ -23,12 +23,12 @@ impl EffectInfo {
         EffectInfo::from_str(&buf)
     }
 
-    fn from_str(s: &str) -> BacResult<EffectInfo> {
+    pub fn from_str(s: &str) -> BacResult<EffectInfo> {
         let info: EffectInfo = serde_json::from_str(s)?;
         Ok(info)
     }
 
-    fn get_effect(&self, bac: f64) -> Option<&Effect> {
+    pub fn get_effect(&self, bac: f64) -> Option<&Effect> {
         self.effects.iter().find(|effect| effect.in_range(bac))
     }
 }
@@ -43,6 +43,13 @@ pub struct Effect {
 impl Effect {
     fn in_range(&self, n: f64) -> bool {
         self.range.contains(&n)
+    }
+
+    pub fn behaviors(&self) -> String {
+        self.behaviors
+            .iter()
+            .map(|b| format!("- {}\n", b))
+            .collect()
     }
 }
 

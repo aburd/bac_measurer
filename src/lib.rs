@@ -2,9 +2,9 @@ extern crate measurements;
 
 pub mod bac;
 pub mod drink;
-pub mod person;
 pub mod effect;
+pub mod person;
 
 pub use bac::{User, BAC};
 pub use drink::Drink;
-pub use person::Person;
+pub use effect::EffectInfo;pub use person::Person;
